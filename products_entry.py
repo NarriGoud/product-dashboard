@@ -48,15 +48,35 @@ with right_col:
             cell = sheet.find(selected_product)
             row = cell.row
 
-            existing_qty = sheet.cell(row, 2).value
-            existing_qty = int(existing_qty) if existing_qty else 0
-            new_qty = existing_qty + quantity
+            # Function to safely get and convert existing numerical values
+            def get_existing_numeric_value(sheet_cell_value, is_int=False):
+                if sheet_cell_value:
+                    try:
+                        return int(sheet_cell_value) if is_int else float(sheet_cell_value)
+                    except ValueError:
+                        return 0 if is_int else 0.0
+                return 0 if is_int else 0.0
 
+            # Get existing values
+            existing_qty = get_existing_numeric_value(sheet.cell(row, 2).value, is_int=True)
+            existing_cgst = get_existing_numeric_value(sheet.cell(row, 3).value)
+            existing_sgst = get_existing_numeric_value(sheet.cell(row, 4).value)
+            existing_price_wo_tax = get_existing_numeric_value(sheet.cell(row, 5).value)
+            existing_price_w_tax = get_existing_numeric_value(sheet.cell(row, 6).value)
+
+            # Calculate new values (additive)
+            new_qty = existing_qty + quantity
+            new_cgst = existing_cgst + cgst
+            new_sgst = existing_sgst + sgst
+            new_price_wo_tax = existing_price_wo_tax + price_wo_tax
+            new_price_w_tax = existing_price_w_tax + price_w_tax
+
+            # Update cells with new additive values
             sheet.update_cell(row, 2, new_qty)
-            sheet.update_cell(row, 3, cgst)
-            sheet.update_cell(row, 4, sgst)
-            sheet.update_cell(row, 5, price_wo_tax)
-            sheet.update_cell(row, 6, price_w_tax)
+            sheet.update_cell(row, 3, new_cgst)
+            sheet.update_cell(row, 4, new_sgst)
+            sheet.update_cell(row, 5, new_price_wo_tax)
+            sheet.update_cell(row, 6, new_price_w_tax)
 
             st.success(f"✅ {selected_product} updated successfully!")
         except Exception as e:
