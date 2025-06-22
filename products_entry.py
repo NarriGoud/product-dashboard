@@ -28,10 +28,17 @@ with left_col:
         taxable_value = total_amount / (1 + gst_rate / 100)
         gst_amount = total_amount - taxable_value
 
+        # Calculate CGST and SGST (half of the total GST amount)
+        cgst_amount = gst_amount / 2
+        sgst_amount = gst_amount / 2
+
         st.subheader("🧾 GST Breakdown")
         st.write(f"**Total Amount (with GST):** ₹ {total_amount:.2f}")
-        st.write(f"**GST Amount ({gst_rate}%):** ₹ {gst_amount:.2f}")
         st.write(f"**Taxable Value (without GST):** ₹ {taxable_value:.2f}")
+        st.write(f"**GST Amount ({gst_rate}%):** ₹ {gst_amount:.2f}")
+        st.write(f"**CGST Amount ({gst_rate/2}%):** ₹ {cgst_amount:.2f}") # Display CGST
+        st.write(f"**SGST Amount ({gst_rate/2}%):** ₹ {sgst_amount:.2f}") # Display SGST
+
 
 # Right: Product Entry Interface
 with right_col:
